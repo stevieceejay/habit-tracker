@@ -43,3 +43,25 @@ test('adding a new habit adds a row and clears the input', async ({ page }) => {
   await expect(habitInput).toHaveValue('');
   expect(pageErrors).toEqual([]);
 });
+
+test('pattern scan and drift update after habit changes', async ({ page }) => {
+  const filePath = path.join(__dirname, '..', 'frontend', 'index.html');
+  const url = `file://${filePath}`;
+
+  await page.goto(url);
+
+  const patterns = page.locator('.patterns');
+  await expect(patterns).toContainText('PATTERN SCAN');
+  await expect(patterns).toContainText('57%');
+  await expect(patterns).toContainText('42pt');
+
+  await page.locator('label.box').nth(0).click();
+  await page.locator('label.box').nth(14).click();
+  await page.locator('label.box').nth(8).click();
+
+  await expect(patterns).toContainText('43%');
+  await expect(patterns).toContainText('14%');
+  await expect(patterns).toContainText('28pt');
+  await expect(patterns).not.toContainText('57%');
+  await expect(patterns).not.toContainText('42pt');
+});
