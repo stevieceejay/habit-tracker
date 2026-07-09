@@ -1,5 +1,7 @@
 from models.db import get_db_connection
 from datetime import date, timedelta
+from models.dates import get_week_dates
+
 
 def toggle_completion(habit_id, day_index):
     week_dates = get_week_dates()

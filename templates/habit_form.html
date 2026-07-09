@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Habit – Habit Ledger</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Add a New Habit</h1>
+        <p class="sub">Create a habit to track in your weekly ledger.</p>
+      </header>
+
+      <form id="habit-form" class="habit-form">
+        <label for="habit-name">Habit name</label>
+        <input
+          type="text"
+          id="habit-name"
+          name="habit-name"
+          placeholder="e.g. Read 20 minutes"
+          required
+          maxlength="40"
+        />
+
+        <div class="form-actions">
+          <button type="submit">Save Habit</button>
+          <a href="index.html" class="ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
 </html>

@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+// app.js — unified script for index.html and habit_form.html
+
+// ✅ Tracker page logic (index.html)
+function initIndexPage() {
   document.querySelectorAll('.habit-checkbox').forEach(box => {
     box.addEventListener('change', async (e) => {
       const habitId = e.target.dataset.habitId;
@@ -14,4 +17,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+}
+
+// ✅ Form page logic (habit_form.html)
+function initHabitFormPage() {
+  const form = document.getElementById('habit-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('habit-name').value.trim();
+    if (!name) return;
+
+    try {
+      const res = await fetch('/habits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+
+      if (res.ok) {
+        window.location.href = 'index.html';
+      } else {
+        alert('Failed to create habit.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error. Please try again.');
+    }
+  });
+}
+
+// ✅ Page detection and initialization
+document.addEventListener('DOMContentLoaded', () => {
+  const currentPage = window.location.pathname.split('/').pop();
+
+  if (currentPage === 'index.html') {
+    initIndexPage();
+  } else if (currentPage === 'habit_form.html') {
+    initHabitFormPage();
+  }
 });
