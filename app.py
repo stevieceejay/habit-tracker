@@ -1,5 +1,7 @@
 from datetime import date, timedelta
 from models.db import get_db_connection
+from models import get_db_connection, get_week_dates, toggle_completion
+
 
 def get_week_dates():
     """Returns 7 ISO date strings for the current week, Sunday through Saturday."""
