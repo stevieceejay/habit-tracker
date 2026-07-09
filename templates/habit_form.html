@@ -1,36 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Habit – Habit Ledger</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
-  </head>
-  <body>
-    <div class="wrap">
-      <header>
-        <h1>Add a New Habit</h1>
-        <p class="sub">Create a habit to track in your weekly ledger.</p>
-      </header>
+{% extends "base.html" %}
 
-      <form id="habit-form" class="habit-form">
-        <label for="habit-name">Habit name</label>
-        <input
-          type="text"
-          id="habit-name"
-          name="habit-name"
-          placeholder="e.g. Read 20 minutes"
-          required
-          maxlength="40"
-        />
+{% block title %}Add Habit – Habit Ledger{% endblock %}
 
-        <div class="form-actions">
-          <button type="submit">Save Habit</button>
-          <a href="{{ url_for('index_page') }}" class="ghost">Cancel</a>
-        </div>
-      </form>
-    </div>
+{% block content %}
+  <div class="wrap">
+    <header>
+      <h1>Add a New Habit</h1>
+      <p class="sub">Create a habit to track in your weekly ledger.</p>
+      <nav class="page-nav">
+        <a href="{{ url_for('index_page') }}" class="ghost">Dashboard</a>
+        <a href="{{ url_for('habit_form_page') }}" class="ghost">Add Habit</a>
+      </nav>
+    </header>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-  </body>
-</html>
+    <form id="habit-form" class="habit-form">
+      <label for="habit-name">Habit name</label>
+      <input
+        type="text"
+        id="habit-name"
+        name="habit-name"
+        placeholder="e.g. Read 20 minutes"
+        required
+        maxlength="40"
+      />
+
+      <div class="form-actions">
+        <button type="submit">Save Habit</button>
+        <a href="{{ url_for('index_page') }}" class="ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -9,49 +9,62 @@ function initIndexPage() {
   const patternContainer = document.getElementById('patterns');
   const habitInput = document.getElementById('habit-input');
   const addForm = document.getElementById('add-form');
-  let toggleCount = 0;
 
   function renderPatterns() {
+    const habitRows = trackerBody.querySelectorAll('tr.habit-row');
+    const habitCount = habitRows.length;
+    const totalSlots = habitCount * 21;
     const activeCount = trackerBody.querySelectorAll('label.box.active').length;
-    const shouldShowDriftState = activeCount <= 9 || toggleCount >= 3;
+    const completionRate = totalSlots ? Math.round((activeCount / totalSlots) * 100) : 0;
+
+    const changedBoxes = Array.from(trackerBody.querySelectorAll('label.box')).filter((label) => {
+      const defaultState = label.dataset.defaultActive === 'true';
+      return label.classList.contains('active') !== defaultState;
+    }).length;
+    const driftRate = totalSlots ? Math.round((changedBoxes / totalSlots) * 100) : 0;
+    const points = Math.max(0, 42 - driftRate);
 
     patternContainer.innerHTML = `
       <h2>PATTERN SCAN</h2>
-      <p>${shouldShowDriftState ? '43%' : '57%'}</p>
-      <p>${shouldShowDriftState ? '14%' : '42%'}</p>
-      <p>${shouldShowDriftState ? '28pt' : '42pt'}</p>
+      <p>${completionRate}% completion</p>
+      <p>${driftRate}% drift</p>
+      <p>${points}pt</p>
+      <p>${habitCount} habit${habitCount === 1 ? '' : 's'} • ${activeCount}/${totalSlots} checks</p>
     `;
   }
 
-  function attachCheckboxBehavior() {
-    trackerBody.querySelectorAll('label.box').forEach((label) => {
-      label.addEventListener('click', (event) => {
-        event.preventDefault();
-        label.classList.toggle('active');
-        toggleCount += 1;
-        renderPatterns();
-      });
-    });
-  }
-
-  function renderInitialRows() {
-    trackerBody.innerHTML = '';
-    const labels = Array.from({ length: 21 }, (_, index) => {
+  function createDayLabels() {
+    return Array.from({ length: 21 }, (_, index) => {
       const label = document.createElement('label');
       label.className = 'box';
       label.dataset.index = index;
+      label.dataset.defaultActive = index < 12 ? 'true' : 'false';
       if (index < 12) {
         label.classList.add('active');
       }
       return label;
     });
-
-    const row = document.createElement('tr');
-    row.innerHTML = '<td>Read 20 minutes</td><td colspan="7"><div class="day-grid"></div></td>';
-    const dayGrid = row.querySelector('.day-grid');
-    labels.forEach((label) => dayGrid.appendChild(label.cloneNode(true)));
-    trackerBody.appendChild(row);
   }
+
+  function addHabitRow(name = 'Read 20 minutes') {
+    const row = document.createElement('tr');
+    row.className = 'habit-row';
+    row.innerHTML = `<td class="habit-cell">${name}</td><td colspan="7"><div class="day-grid"></div></td>`;
+    const dayGrid = row.querySelector('.day-grid');
+    createDayLabels().forEach((label) => dayGrid.appendChild(label));
+    trackerBody.appendChild(row);
+    return row;
+  }
+
+  trackerBody.addEventListener('click', (event) => {
+    const label = event.target.closest('label.box');
+    if (!label) return;
+
+    event.preventDefault();
+    label.classList.toggle('active');
+    toggleCount += 1;
+    renderPatterns();
+  });
 
   if (addForm) {
     addForm.addEventListener('submit', (event) => {
@@ -59,15 +72,14 @@ function initIndexPage() {
       const name = habitInput.value.trim();
       if (!name) return;
 
-      const row = document.createElement('tr');
-      row.innerHTML = `<td>${name}</td><td colspan="7"></td>`;
-      trackerBody.appendChild(row);
+      addHabitRow(name);
       habitInput.value = '';
+      renderPatterns();
     });
   }
 
-  renderInitialRows();
-  attachCheckboxBehavior();
+  trackerBody.innerHTML = '';
+  addHabitRow();
   renderPatterns();
 }
 
@@ -100,12 +112,13 @@ function initHabitFormPage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const currentPage = window.location.pathname.split('/').pop();
-  const isIndexLikePage = currentPage === '' || currentPage === 'index.html' || currentPage === 'frontend/index.html';
+  const currentPage = window.location.pathname.split('/').filter(Boolean).pop() || '';
+  const isIndexLikePage = ['','index','index.html','frontend/index.html'].includes(currentPage);
+  const isHabitFormPage = ['habit-form','habit_form.html','templates/habit_form.html'].includes(currentPage);
 
   if (isIndexLikePage) {
     initIndexPage();
-  } else if (currentPage === 'habit_form.html' || currentPage === 'templates/habit_form.html') {
+  } else if (isHabitFormPage) {
     initHabitFormPage();
   }
 });
