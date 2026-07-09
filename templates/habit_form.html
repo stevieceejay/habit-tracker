@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Habit – Habit Ledger</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
   </head>
   <body>
     <div class="wrap">
@@ -26,11 +26,11 @@
 
         <div class="form-actions">
           <button type="submit">Save Habit</button>
-          <a href="index.html" class="ghost">Cancel</a>
+          <a href="{{ url_for('index_page') }}" class="ghost">Cancel</a>
         </div>
       </form>
     </div>
 
-    <script src="app.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   </body>
 </html>
