@@ -35,6 +35,22 @@ function renderHabits(habits) {
     streakEl.textContent = `🔥 Streak: ${habit.streak}`;
     habitRow.appendChild(streakEl);
 
+    // Weekly Progress Bar
+    const progressWrapper = document.createElement("div");
+    progressWrapper.className = "progress-wrapper";
+
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+
+    const progressFill = document.createElement("div");
+    progressFill.className = "progress-fill";
+    progressFill.style.width = `${habit.progress * 100}%`;
+
+    progressBar.appendChild(progressFill);
+    progressWrapper.appendChild(progressBar);
+
+    habitRow.appendChild(progressWrapper);
+
     // Expired styling
     if (habit.expired) {
       habitRow.classList.add("expired");

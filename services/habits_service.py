@@ -23,7 +23,9 @@ def save_habits_to_db(habits):
     with open(DB_PATH, "w") as f:
         json.dump(habits, f, indent=2)
 
-
+def calculate_progress(days):
+    completed = sum(1 for d in days if d)
+    return completed / 7
 # ================================
 # Streak Calculation
 # ================================
@@ -54,6 +56,7 @@ def get_all_habits():
     for h in habits:
         h["streak"] = calculate_streak(h["days"])
         h["expired"] = is_expired(h["days"])
+        h["progress"] = calculate_progress(h["days"])
 
     return habits
 

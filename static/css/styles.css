@@ -1,35 +1,46 @@
-:root{
---paper:#EEF1EC; --paper-raised:#F7F9F6; --ink:#1B2A28; --ink-soft:#4B5A56;
---grid:#C7CFC5; --correct:#2E7D5B; --incorrect:#A6432E;
+/* ================================
+   Habit Streak Styling
+   ================================ */
+.habit-streak {
+  font-weight: 600;
+  color: var(--correct);
+  margin-left: 12px;
+  font-size: 13px;
 }
-*{box-sizing:border-box;}
-body{margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Mono', monospace; padding:40px 24px;}
-.wrap{max-width:920px; margin:0 auto;}
-h1{font-family:'Fraunces', serif; font-size:36px; margin:0 0 8px;}
-.eyebrow{font-size:11px; letter-spacing:.14em; color:var(--incorrect); font-weight:600; margin:0 0 8px;}
-.sub{color:var(--ink-soft); font-size:13px;}
-.controls{display:flex; gap:10px; margin:24px 0 20px; flex-wrap:wrap;}
-.add-row{display:flex; gap:8px; flex:1; min-width:260px;}
-input[type="text"]{flex:1; font-family:inherit; font-size:13px; padding:10px 12px; border:1px solid var(--grid); border-radius:6px; background:var(--paper-raised); color:var(--ink);}
-button{font-family:inherit; font-size:12px; font-weight:600; padding:10px 16px; border-radius:6px; border:1px solid var(--ink); background:var(--ink); color:var(--paper-raised); cursor:pointer;}
-button.ghost{background:transparent; color:var(--ink); border:1px solid var(--grid);}
-button:disabled{opacity:.4; cursor:not-allowed;}
-.table-scroll{overflow-x:auto; border:1px solid var(--grid); border-radius:8px; background:var(--paper-raised);}
-table{width:100%; border-collapse:collapse; min-width:640px;}
-th{font-size:10.5px; text-transform:uppercase; color:var(--ink-soft); padding:14px 8px; border-bottom:1px solid var(--grid);}
-td{padding:12px 8px; text-align:center; border-bottom:1px solid var(--grid);}
-.habit-cell{text-align:left; padding-left:18px; font-weight:600; font-size:13.5px;}
-.habit-checkbox{width:20px; height:20px; accent-color:var(--correct);}
-.row-remove{background:transparent; border:1px solid var(--grid); color:var(--incorrect); padding:6px 9px;}
-.page-nav{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
-.page-nav a{display:inline-block; padding:8px 12px; border:1px solid var(--grid); border-radius:6px; text-decoration:none; color:var(--ink); background:var(--paper-raised);}
-.form-actions{display:flex; gap:8px; margin-top:12px; align-items:center;}
-.habit-form{display:flex; flex-direction:column; gap:10px; max-width:420px; margin-top:20px;}
-.day-grid{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
-.box{display:inline-flex; width:18px; height:18px; border-radius:4px; border:1px solid var(--grid); background:var(--paper); cursor:pointer; transition:transform .15s ease, background .15s ease;}
-.box.active{background:var(--correct); border-color:var(--correct); transform:scale(1.05);}
-.box:hover{transform:scale(1.05);}
-.patterns{margin-top:20px; padding:16px; border:1px solid var(--grid); border-radius:8px; background:var(--paper-raised);}
-.patterns h2{margin:0 0 8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase;}
-.patterns p{margin:4px 0; font-size:13px;}
-.habit-cell{text-align:left; padding-left:18px; font-weight:600; font-size:13.5px;}
+
+
+/* ================================
+   Expired Habit Styling
+   ================================ */
+.expired {
+  opacity: 0.45;
+  text-decoration: line-through;
+  color: var(--incorrect);
+}
+
+
+/* ================================
+   Weekly Progress Bar
+   ================================ */
+.progress-wrapper {
+  width: 160px;
+  margin-left: 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--grid);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--correct);
+  width: 0%;
+  transition: width 0.35s ease;
+}
