@@ -1,7 +1,5 @@
 from flask import Flask, render_template
-
-from routes import habits_bp
-
+from routes.habits import habits_bp
 
 def create_app():
     app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -21,5 +19,5 @@ def create_app():
 
     return app
 
-
 app = create_app()
+
