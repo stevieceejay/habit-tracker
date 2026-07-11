@@ -2,11 +2,12 @@ CREATE TABLE IF NOT EXISTS habits (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
+
 CREATE TABLE IF NOT EXISTS habit_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     habit_id INTEGER NOT NULL,
     log_date TEXT NOT NULL,
     completed BOOLEAN DEFAULT 0,
-    FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
+    FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
     UNIQUE (habit_id, log_date)
 );
