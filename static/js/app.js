@@ -1,132 +1,112 @@
-// app_index.js
 document.addEventListener("DOMContentLoaded", () => {
-  const currentPage = window.location.pathname.split("/").pop();
+  loadHabits();
 
-  // Only run this logic on index.html
-  if (currentPage === "" || currentPage === "index" || currentPage === "index.html") {
-    initIndexPage();
+  const resetBtn = document.getElementById("new-week-btn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetWeek);
   }
 });
 
-function initIndexPage() {
-  // ================================
-  // DOM ELEMENTS
-  // ================================
-  const trackerBody = document.getElementById("tracker-body");
-  const newWeekBtn = document.getElementById("new-week-btn");
-  const undoBtn = document.getElementById("undo-btn");
 
-  if (!trackerBody) return; // Defensive: prevents errors if HTML changes
+async function loadHabits() {
+  const response = await fetch("/habits");
+  const habits = await response.json();
+  renderHabits(habits);
+}
 
-  // ================================
-  // STATE
-  // ================================
-  let habits = [];
-  let removedHabits = [];
 
-  // ================================
-  // LOAD HABITS FROM BACKEND
-  // ================================
-  async function loadHabits() {
-    const response = await fetch("/habits");
-    habits = await response.json();
-    renderHabits();
-  }
+function renderHabits(habits) {
+  const container = document.getElementById("tracker-body");
+  container.innerHTML = "";
 
-  // ================================
-  // RENDER HABITS TABLE
-  // ================================
-  function renderHabits() {
-    trackerBody.innerHTML = "";
+  habits.forEach((habit) => {
+    const habitRow = document.createElement("div");
+    habitRow.className = "habit-row";
 
-    habits.forEach((habit) => {
-      const row = document.createElement("tr");
-      row.dataset.id = habit.id;
+    // Habit name
+    const nameEl = document.createElement("span");
+    nameEl.className = "habit-name";
+    nameEl.textContent = habit.name;
+    habitRow.appendChild(nameEl);
 
-      // Habit name
-      const nameCell = document.createElement("td");
-      nameCell.textContent = habit.name;
-      row.appendChild(nameCell);
+    // 🔥 Streak display
+    const streakEl = document.createElement("span");
+    streakEl.className = "habit-streak";
+    streakEl.textContent = `🔥 Streak: ${habit.streak}`;
+    habitRow.appendChild(streakEl);
 
-      // Days (Mon–Sun)
-      habit.days.forEach((checked, index) => {
-        const cell = document.createElement("td");
-        const box = document.createElement("input");
-        box.type = "checkbox";
-        box.checked = checked;
+    // Expired styling
+    if (habit.expired) {
+      habitRow.classList.add("expired");
+    }
 
-        box.addEventListener("change", () => toggleDay(habit.id, index, box.checked));
+    // Days checkboxes
+    const daysContainer = document.createElement("div");
+    daysContainer.className = "days-container";
 
-        cell.appendChild(box);
-        row.appendChild(cell);
+    habit.days.forEach((completed, dayIndex) => {
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = completed;
+
+      checkbox.addEventListener("change", () => {
+        toggleHabit(habit.id, dayIndex);
       });
 
-      // Remove button
-      const removeCell = document.createElement("td");
-      const removeBtn = document.createElement("button");
-      removeBtn.textContent = "✕";
-      removeBtn.classList.add("remove-btn");
-
-      removeBtn.addEventListener("click", () => removeHabit(habit.id));
-
-      removeCell.appendChild(removeBtn);
-      row.appendChild(removeCell);
-
-      trackerBody.appendChild(row);
-    });
-  }
-
-  // ================================
-  // TOGGLE DAY
-  // ================================
-  async function toggleDay(id, dayIndex, value) {
-    await fetch(`/habits/${id}/toggle`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dayIndex, value }),
+      daysContainer.appendChild(checkbox);
     });
 
-    loadHabits();
-  }
+    habitRow.appendChild(daysContainer);
 
-  // ================================
-  // REMOVE HABIT
-  // ================================
-  async function removeHabit(id) {
-    const habit = habits.find((h) => h.id === id);
-    removedHabits.push(habit);
+    // Delete button
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "Delete";
 
-    await fetch(`/habits/${id}`, { method: "DELETE" });
-
-    loadHabits();
-  }
-
-  // ================================
-  // UNDO REMOVE
-  // ================================
-  undoBtn?.addEventListener("click", async () => {
-    const habit = removedHabits.pop();
-    if (!habit) return;
-
-    await fetch("/habits", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: habit.name }),
+    deleteBtn.addEventListener("click", () => {
+      deleteHabit(habit.id);
     });
 
-    loadHabits();
+    habitRow.appendChild(deleteBtn);
+
+    container.appendChild(habitRow);
+  });
+}
+
+
+// ================================
+// Toggle Habit Day
+// ================================
+async function toggleHabit(habitId, dayIndex) {
+  await fetch(`/habits/${habitId}/toggle`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dayIndex }),
   });
 
-  // ================================
-  // NEW WEEK RESET
-  // ================================
-  newWeekBtn?.addEventListener("click", async () => {
-    await fetch("/reset-week", { method: "POST" });
-    loadHabits();
+  loadHabits();
+}
+
+
+// ================================
+// Delete Habit
+// ================================
+async function deleteHabit(habitId) {
+  await fetch(`/habits/${habitId}`, {
+    method: "DELETE",
   });
 
-  // ================================
-  // INITIAL LOAD
-  // ================================
+  loadHabits();
+}
+
+
+// ================================
+// Reset Week
+// ================================
+async function resetWeek() {
+  await fetch("/reset-week", {
+    method: "POST",
+  });
+
   loadHabits();
 }
