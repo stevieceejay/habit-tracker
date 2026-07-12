@@ -1,79 +1,158 @@
 from flask import Blueprint, jsonify, request
-
-from services.habits_service import (
-    create_habit,
-    get_all_habits,
-    remove_habit,
-    toggle_completion,
-    reset_week
-)
+import sqlite3
+import uuid
 
 habits_bp = Blueprint("habits", __name__)
 
+# -----------------------------------
+# Database Helpers
+# -----------------------------------
+def get_db():
+    conn = sqlite3.connect("habits.db")
+    conn.row_factory = sqlite3.Row
+    return conn
 
-@habits_bp.get("/health")
-def health_check():
-    return jsonify({"status": "ok"})
+def init_db():
+    conn = get_db()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS habits (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            days TEXT NOT NULL,
+            prev_rate INTEGER
+        )
+    """)
+    conn.commit()
+    conn.close()
 
+init_db()
 
-# ================================
-# GET ALL HABITS (frontend expects array)
-# ================================
+# -----------------------------------
+# Utility
+# -----------------------------------
+def serialize(row):
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "days": [d == "1" for d in row["days"].split(",")],
+        "prevRate": row["prev_rate"]
+    }
+
+# -----------------------------------
+# GET /habits
+# -----------------------------------
 @habits_bp.get("/habits")
 def list_habits():
-    habits = get_all_habits()
-    return jsonify(habits), 200
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM habits").fetchall()
+    conn.close()
+    return jsonify([serialize(r) for r in rows]), 200
 
-
-# ================================
-# CREATE HABIT
-# ================================
+# -----------------------------------
+# POST /habits
+# -----------------------------------
 @habits_bp.post("/habits")
-def create_habit_route():
-    payload = request.get_json(silent=True) or {}
-    name = (payload.get("name") or "").strip()
+def create_habit():
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
 
     if not name:
         return jsonify({"error": "Habit name is required"}), 400
 
-    create_habit(name)
+    habit_id = uuid.uuid4().hex
 
-    # Return the newly created habit
-    habits = get_all_habits()
-    created = next((h for h in habits if h["name"] == name), None)
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO habits (id, name, days, prev_rate) VALUES (?, ?, ?, ?)",
+        (habit_id, name, "0,0,0,0,0,0,0", None)
+    )
+    conn.commit()
+    conn.close()
 
-    return jsonify({"habit": created}), 201
+    return jsonify({"id": habit_id, "name": name}), 201
 
+# -----------------------------------
+# POST /habits/toggle/<id>/<day>
+# -----------------------------------
+@habits_bp.post("/habits/toggle/<habit_id>/<int:day_index>")
+def toggle_day(habit_id, day_index):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM habits WHERE id = ?", (habit_id,)).fetchone()
 
-# ================================
-# DELETE HABIT
-# ================================
-@habits_bp.delete("/habits/<int:habit_id>")
-def delete_habit_route(habit_id):
-    remove_habit(habit_id)
-    return jsonify({"deleted": habit_id}), 200
+    if not row:
+        return jsonify({"error": "Habit not found"}), 404
 
+    days = row["days"].split(",")
+    days[day_index] = "1" if days[day_index] == "0" else "0"
 
-# ================================
-# TOGGLE HABIT COMPLETION (correct route)
-# ================================
-@habits_bp.put("/habits/<int:habit_id>/toggle")
-def toggle_habit_route(habit_id):
-    payload = request.get_json(silent=True) or {}
-    dayIndex = payload.get("dayIndex")
+    conn.execute("UPDATE habits SET days = ? WHERE id = ?", (",".join(days), habit_id))
+    conn.commit()
+    conn.close()
 
-    if dayIndex is None:
-        return jsonify({"error": "dayIndex is required"}), 400
-
-    toggle_completion(habit_id, dayIndex)
     return jsonify({"updated": True}), 200
 
+# -----------------------------------
+# DELETE /habits/<id>
+# -----------------------------------
+@habits_bp.delete("/habits/<habit_id>")
+def delete_habit(habit_id):
+    conn = get_db()
+    conn.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"deleted": habit_id}), 200
 
-
-# ================================
-# RESET WEEK
-# ================================
+# -----------------------------------
+# POST /reset-week
+# -----------------------------------
 @habits_bp.post("/reset-week")
-def reset_week_route():
-    reset_week()
+def reset_week():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM habits").fetchall()
+
+    for r in rows:
+        days = [d == "1" for d in r["days"].split(",")]
+        checked = sum(days)
+        rate = round((checked / 7) * 100)
+
+        conn.execute(
+            "UPDATE habits SET prev_rate = ?, days = ? WHERE id = ?",
+            (rate, "0,0,0,0,0,0,0", r["id"])
+        )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({"reset": True}), 200
+
+# -----------------------------------
+# GET /patterns
+# -----------------------------------
+@habits_bp.get("/patterns")
+def patterns():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM habits").fetchall()
+    conn.close()
+
+    habits = [serialize(r) for r in rows]
+    if not habits:
+        return jsonify({"patterns": None}), 200
+
+    # strongest + weakest
+    rates = [{"name": h["name"], "rate": round(sum(h["days"]) / 7 * 100)} for h in habits]
+    strongest = max(rates, key=lambda x: x["rate"])
+    weakest = min(rates, key=lambda x: x["rate"])
+
+    # drifting
+    drifting = None
+    for h in habits:
+        if h["prevRate"] is not None:
+            diff = round(sum(h["days"]) / 7 * 100) - h["prevRate"]
+            if diff < 0:
+                drifting = {"name": h["name"], "diff": diff}
+
+    return jsonify({
+        "strongest": strongest,
+        "weakest": weakest,
+        "drifting": drifting
+    }), 200

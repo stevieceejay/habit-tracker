@@ -1,50 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Habit Ledger{% endblock %}
-
 {% block content %}
-  <div class="wrap">
-    <header>
-      <p class="eyebrow">WEEKLY TRACKING GRID</p>
-      <h1>Habit Ledger</h1>
-      <p class="sub">
-        Check off each day as you go. The bar under each habit reads this week's completion; the status column reads the drift against last week's baseline.
-      </p>
-      <nav class="page-nav">
-        <a href="{{ url_for('index_page') }}" class="ghost">Dashboard</a>
-        <a href="{{ url_for('habit_form_page') }}" class="ghost">Add Habit</a>
-      </nav>
-    </header>
 
-    <div class="controls">
-      <form class="add-row" id="add-form">
-        <input type="text" id="habit-input" placeholder="Add a habit, e.g. Read 20 minutes" required maxlength="40" />
-        <button type="submit">Add habit</button>
-      </form>
-      <button type="button" class="ghost" id="new-week-btn">Save week &amp; reset</button>
-      <button type="button" class="ghost" id="undo-btn" disabled>Undo remove</button>
-    </div>
+<header>
+  <p class="eyebrow">WEEKLY TRACKING GRID</p>
+  <h1>Habit Ledger</h1>
+  <p class="sub">
+    Check off each day as you go. The bar under each habit reads this week's completion;
+    the status column reads the drift against last week's baseline.
+  </p>
+</header>
 
-    <div class="table-scroll">
-      <table id="tracker">
-        <thead>
-          <tr>
-            <th class="col-habit">Habit</th>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th class="col-status">Status</th>
-            <th class="col-actions"></th>
-          </tr>
-        </thead>
-        <tbody id="tracker-body"></tbody>
-      </table>
-    </div>
+<div class="controls">
+  <form class="add-row" id="add-form">
+    <input 
+      type="text" 
+      id="habit-input" 
+      placeholder="Add a habit, e.g. Read 20 minutes" 
+      required 
+      maxlength="40"
+    >
+    <button type="submit">Add habit</button>
+  </form>
 
-    <section class="patterns" id="patterns"></section>
-  </div>
+  <button type="button" class="ghost" id="new-week-btn">Save week &amp; reset</button>
+  <button type="button" class="ghost" id="undo-btn" disabled>Undo remove</button>
+</div>
+
+<div class="table-scroll">
+  <table id="tracker">
+    <thead>
+      <tr>
+        <th class="col-habit">Habit</th>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+        <th class="col-status">Status</th>
+        <th class="col-actions"></th>
+      </tr>
+    </thead>
+
+    <tbody id="tracker-body"></tbody>
+  </table>
+</div>
+
+<section class="patterns" id="patterns"></section>
+
 {% endblock %}
