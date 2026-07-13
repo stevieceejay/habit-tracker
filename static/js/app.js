@@ -81,8 +81,11 @@ function render() {
 
   habits.forEach(h => {
     DAYS.forEach((_, i) => {
-      const box = document.getElementById(`box-${h.id}-${i}`);
-      box.addEventListener("click", () => toggleDay(h.id, i));
+      const input = document.querySelector(`#box-${h.id}-${i} input`);
+      input.addEventListener("click", (e) => {
+        e.preventDefault(); // stop default checkbox toggle
+        toggleDay(h.id, i);
+      });
     });
 
     document.getElementById(`remove-${h.id}`)

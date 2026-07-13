@@ -1,53 +1,36 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Habit Tracker</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
 
-{% block content %}
+  <h1>Habit Tracker</h1>
 
-<header>
-  <p class="eyebrow">WEEKLY TRACKING GRID</p>
-  <h1>Habit Ledger</h1>
-  <p class="sub">
-    Check off each day as you go. The bar under each habit reads this week's completion;
-    the status column reads the drift against last week's baseline.
-  </p>
-</header>
-
-<div class="controls">
-  <form class="add-row" id="add-form">
-    <input 
-      type="text" 
-      id="habit-input" 
-      placeholder="Add a habit, e.g. Read 20 minutes" 
-      required 
-      maxlength="40"
-    >
-    <button type="submit">Add habit</button>
+  <form id="add-form">
+    <input id="habit-input" type="text" placeholder="New habit…" autocomplete="off">
+    <button type="submit">Add</button>
   </form>
 
-  <button type="button" class="ghost" id="new-week-btn">Save week &amp; reset</button>
-  <button type="button" class="ghost" id="undo-btn" disabled>Undo remove</button>
-</div>
+  <button id="undo-btn" disabled>Undo remove</button>
+  <button id="new-week-btn">Start New Week</button>
 
-<div class="table-scroll">
-  <table id="tracker">
+  <table>
     <thead>
       <tr>
-        <th class="col-habit">Habit</th>
-        <th>Sun</th>
-        <th>Mon</th>
-        <th>Tue</th>
-        <th>Wed</th>
-        <th>Thu</th>
-        <th>Fri</th>
-        <th>Sat</th>
-        <th class="col-status">Status</th>
-        <th class="col-actions"></th>
+        <th>Habit</th>
+        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+        <th>Status</th>
+        <th></th>
       </tr>
     </thead>
-
     <tbody id="tracker-body"></tbody>
   </table>
-</div>
 
-<section class="patterns" id="patterns"></section>
+  <div id="patterns"></div>
 
-{% endblock %}
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

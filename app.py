@@ -1,32 +1,26 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from routes.habits import habits_bp
 
 def create_app():
     app = Flask(
         __name__,
-        template_folder="templates",
-        static_folder="static"
+        static_folder="static",
+        template_folder="templates"
     )
 
-    # Register API blueprint
     app.register_blueprint(habits_bp)
 
-    # Main dashboard
     @app.get("/")
-    def index_page():
+    def index():
         return render_template("index.html")
 
-    # Habit form page (if you use it)
-    @app.get("/habit-form")
-    def habit_form_page():
-        return render_template("habit_form.html")
-
-    # Alias for index
-    @app.get("/index")
-    def index_alias_page():
-        return render_template("index.html")
+    @app.get("/static/<path:filename>")
+    def static_files(filename):
+        return send_from_directory("static", filename)
 
     return app
 
 app = create_app()
 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

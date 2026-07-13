@@ -74,7 +74,7 @@ def create_habit():
 # -----------------------------------
 # POST /habits/toggle/<id>/<day>
 # -----------------------------------
-@habits_bp.post("/habits/toggle/<habit_id>/<int:day_index>")
+@habits_bp.post("/habits/toggle/<string:habit_id>/<int:day_index>")
 def toggle_day(habit_id, day_index):
     conn = get_db()
     row = conn.execute("SELECT * FROM habits WHERE id = ?", (habit_id,)).fetchone()
@@ -94,7 +94,7 @@ def toggle_day(habit_id, day_index):
 # -----------------------------------
 # DELETE /habits/<id>
 # -----------------------------------
-@habits_bp.delete("/habits/<habit_id>")
+@habits_bp.delete("/habits/<string:habit_id>")
 def delete_habit(habit_id):
     conn = get_db()
     conn.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
@@ -138,12 +138,10 @@ def patterns():
     if not habits:
         return jsonify({"patterns": None}), 200
 
-    # strongest + weakest
     rates = [{"name": h["name"], "rate": round(sum(h["days"]) / 7 * 100)} for h in habits]
     strongest = max(rates, key=lambda x: x["rate"])
     weakest = min(rates, key=lambda x: x["rate"])
 
-    # drifting
     drifting = None
     for h in habits:
         if h["prevRate"] is not None:
