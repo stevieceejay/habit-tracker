@@ -1,4 +1,9 @@
 // ================================
+// Constants
+// ================================
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+// ================================
 // API Helpers
 // ================================
 async function apiGet(url) {
@@ -21,14 +26,14 @@ async function apiDelete(url) {
 }
 
 // ================================
-// State (loaded from backend)
+// State
 // ================================
 let habits = [];
 let undoStack = [];
 const UNDO_LIMIT = 10;
 
 // ================================
-// Load habits from backend
+// Load habits
 // ================================
 async function loadHabits() {
   habits = await apiGet("/habits");
@@ -83,7 +88,7 @@ function render() {
     DAYS.forEach((_, i) => {
       const input = document.querySelector(`#box-${h.id}-${i} input`);
       input.addEventListener("click", (e) => {
-        e.preventDefault(); // stop default checkbox toggle
+        e.preventDefault();
         toggleDay(h.id, i);
       });
     });

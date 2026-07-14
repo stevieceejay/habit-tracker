@@ -4,9 +4,6 @@ import uuid
 
 habits_bp = Blueprint("habits", __name__)
 
-# -----------------------------------
-# Database Helpers
-# -----------------------------------
 def get_db():
     conn = sqlite3.connect("habits.db")
     conn.row_factory = sqlite3.Row
@@ -27,9 +24,6 @@ def init_db():
 
 init_db()
 
-# -----------------------------------
-# Utility
-# -----------------------------------
 def serialize(row):
     return {
         "id": row["id"],
@@ -38,9 +32,6 @@ def serialize(row):
         "prevRate": row["prev_rate"]
     }
 
-# -----------------------------------
-# GET /habits
-# -----------------------------------
 @habits_bp.get("/habits")
 def list_habits():
     conn = get_db()
@@ -48,9 +39,6 @@ def list_habits():
     conn.close()
     return jsonify([serialize(r) for r in rows]), 200
 
-# -----------------------------------
-# POST /habits
-# -----------------------------------
 @habits_bp.post("/habits")
 def create_habit():
     data = request.get_json(silent=True) or {}
@@ -71,9 +59,6 @@ def create_habit():
 
     return jsonify({"id": habit_id, "name": name}), 201
 
-# -----------------------------------
-# POST /habits/toggle/<id>/<day>
-# -----------------------------------
 @habits_bp.post("/habits/toggle/<string:habit_id>/<int:day_index>")
 def toggle_day(habit_id, day_index):
     conn = get_db()
@@ -91,9 +76,6 @@ def toggle_day(habit_id, day_index):
 
     return jsonify({"updated": True}), 200
 
-# -----------------------------------
-# DELETE /habits/<id>
-# -----------------------------------
 @habits_bp.delete("/habits/<string:habit_id>")
 def delete_habit(habit_id):
     conn = get_db()
@@ -102,9 +84,6 @@ def delete_habit(habit_id):
     conn.close()
     return jsonify({"deleted": habit_id}), 200
 
-# -----------------------------------
-# POST /reset-week
-# -----------------------------------
 @habits_bp.post("/reset-week")
 def reset_week():
     conn = get_db()
@@ -125,9 +104,6 @@ def reset_week():
 
     return jsonify({"reset": True}), 200
 
-# -----------------------------------
-# GET /patterns
-# -----------------------------------
 @habits_bp.get("/patterns")
 def patterns():
     conn = get_db()
