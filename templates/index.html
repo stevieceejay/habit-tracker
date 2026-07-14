@@ -1,36 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Habit Tracker</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
+{% extends "base.html" %}
 
-  <h1>Habit Tracker</h1>
+{% block title %}Habit Ledger{% endblock %}
 
-  <form id="add-form">
-    <input id="habit-input" type="text" placeholder="New habit…" autocomplete="off">
-    <button type="submit">Add</button>
-  </form>
+{% block content %}
+<div class="page-container">
 
-  <button id="undo-btn" disabled>Undo remove</button>
-  <button id="new-week-btn">Start New Week</button>
+  <!-- Header -->
+  <header class="header">
+    <h1>Habit Ledger</h1>
+    <p class="sub">
+      Track your weekly habits with a clean, modern dashboard.
+    </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Habit</th>
-        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="tracker-body"></tbody>
-  </table>
+    <nav class="nav">
+      <a href="{{ url_for('index_page') }}" class="nav-link">Dashboard</a>
+      <a href="{{ url_for('habit_form_page') }}" class="nav-link">Add Habit</a>
+    </nav>
+  </header>
 
-  <div id="patterns"></div>
+  <!-- Add Habit Form -->
+  <section class="add-section">
+    <form class="add-row" id="add-form">
+      <input 
+        type="text" 
+        id="habit-input" 
+        placeholder="Add a habit (e.g., Read 20 minutes)" 
+        required 
+        maxlength="40"
+        class="input-modern"
+      />
+      <button type="submit" class="btn-primary">Add Habit</button>
+    </form>
 
-  <script src="/static/js/app.js"></script>
-</body>
-</html>
+    <div class="actions">
+      <button type="button" class="btn-secondary" id="new-week-btn">Save Week & Reset</button>
+      <button type="button" class="btn-secondary" id="undo-btn" disabled>Undo Remove</button>
+    </div>
+  </section>
+
+  <!-- Habit Table -->
+  <section class="habit-wrapper">
+    <table id="tracker">
+      <thead>
+        <tr>
+          <th class="col-habit">Habit</th>
+          <th>Sun</th>
+          <th>Mon</th>
+          <th>Tue</th>
+          <th>Wed</th>
+          <th>Thu</th>
+          <th>Fri</th>
+          <th>Sat</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody id="tracker-body"></tbody>
+    </table>
+  </section>
+
+  <!-- Patterns -->
+  <section id="patterns"></section>
+
+</div>
+{% endblock %}

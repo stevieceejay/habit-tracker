@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}Habit Ledger{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+
+    <!-- Chart.js (if needed for analytics later) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <div class="page-container">
+
+      <!-- Global Header -->
+      <header class="header">
+        <h1>Habit Ledger</h1>
+        <p class="sub">Track your weekly habits with a clean, modern dashboard.</p>
+
+        <nav class="nav">
+          <a href="{{ url_for('index_page') }}" class="nav-link">Dashboard</a>
+          <a href="{{ url_for('habit_form_page') }}" class="nav-link">Add Habit</a>
+        </nav>
+      </header>
+
+      {% block content %}{% endblock %}
+
+    </div>
+
+    <!-- Main App Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
