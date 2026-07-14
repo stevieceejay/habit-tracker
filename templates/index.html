@@ -20,35 +20,8 @@
       </tr>
     </thead>
 
-    <tbody id="tracker-body">
-      {% for habit in habits %}
-      <tr class="row-enter">
-        <td class="habit-cell">
-          <div class="habit-name">{{ habit[1] }}</div>
-          <div class="streak-track">
-            <div class="streak-fill" style="width:0%"></div>
-          </div>
-        </td>
-
-        {% for day in ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"] %}
-        <td>
-          <div class="box">
-            <input type="checkbox" />
-            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-          </div>
-        </td>
-        {% endfor %}
-
-        <td class="status-cell">
-          <div class="status-value new">New</div>
-        </td>
-
-        <td>
-          <button class="row-remove">×</button>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
+    <!-- JS will fully populate this -->
+    <tbody id="tracker-body"></tbody>
   </table>
 
 </section>
