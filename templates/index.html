@@ -1,66 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Habit Ledger{% endblock %}
-
 {% block content %}
-<div class="page-container">
 
-  <!-- Header -->
-  <header class="header">
-    <h1>Habit Ledger</h1>
-    <p class="sub">
-      Track your weekly habits with a clean, modern dashboard.
-    </p>
+<section class="habit-wrapper">
 
-    <nav class="nav">
-      <a href="{{ url_for('index_page') }}" class="nav-link">Dashboard</a>
-      <a href="{{ url_for('habit_form_page') }}" class="nav-link">Add Habit</a>
-    </nav>
-  </header>
+  <table id="tracker">
+    <thead>
+      <tr>
+        <th class="col-habit">Habit</th>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+        <th class="col-status">Status</th>
+        <th class="col-actions"></th>
+      </tr>
+    </thead>
 
-  <!-- Add Habit Form -->
-  <section class="add-section">
-    <form class="add-row" id="add-form">
-      <input 
-        type="text" 
-        id="habit-input" 
-        placeholder="Add a habit (e.g., Read 20 minutes)" 
-        required 
-        maxlength="40"
-        class="input-modern"
-      />
-      <button type="submit" class="btn-primary">Add Habit</button>
-    </form>
+    <tbody id="tracker-body">
+      {% for habit in habits %}
+      <tr class="row-enter">
+        <td class="habit-cell">
+          <div class="habit-name">{{ habit[1] }}</div>
+          <div class="streak-track">
+            <div class="streak-fill" style="width:0%"></div>
+          </div>
+        </td>
 
-    <div class="actions">
-      <button type="button" class="btn-secondary" id="new-week-btn">Save Week & Reset</button>
-      <button type="button" class="btn-secondary" id="undo-btn" disabled>Undo Remove</button>
-    </div>
-  </section>
+        {% for day in ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"] %}
+        <td>
+          <div class="box">
+            <input type="checkbox" />
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+        </td>
+        {% endfor %}
 
-  <!-- Habit Table -->
-  <section class="habit-wrapper">
-    <table id="tracker">
-      <thead>
-        <tr>
-          <th class="col-habit">Habit</th>
-          <th>Sun</th>
-          <th>Mon</th>
-          <th>Tue</th>
-          <th>Wed</th>
-          <th>Thu</th>
-          <th>Fri</th>
-          <th>Sat</th>
-          <th class="col-status">Status</th>
-          <th class="col-actions"></th>
-        </tr>
-      </thead>
-      <tbody id="tracker-body"></tbody>
-    </table>
-  </section>
+        <td class="status-cell">
+          <div class="status-value new">New</div>
+        </td>
 
-  <!-- Patterns -->
-  <section id="patterns"></section>
+        <td>
+          <button class="row-remove">×</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-</div>
+</section>
+
+<section id="patterns"></section>
+
 {% endblock %}

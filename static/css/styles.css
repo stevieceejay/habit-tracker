@@ -419,3 +419,18 @@ button {
   opacity: 0.4;
   cursor: default;
 }
+
+.form-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+

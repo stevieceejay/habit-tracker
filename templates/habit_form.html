@@ -9,7 +9,7 @@
   <h2 class="form-title">Add a New Habit</h2>
   <p class="sub">Create a habit to track in your weekly ledger.</p>
 
-  <form id="habit-form" class="habit-form">
+  <form id="habit-form" class="habit-form" method="POST" action="{{ url_for('habit_form') }}">
 
     <label for="habit-name" class="form-label">Habit Name</label>
     <input
