@@ -16,7 +16,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
 
-    <!-- Chart.js (if needed for analytics later) -->
+    <!-- Chart.js (optional future analytics) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
@@ -29,8 +29,8 @@
         <p class="sub">Track your weekly habits with a clean, modern dashboard.</p>
 
         <nav class="nav">
-          <a href="{{ url_for('index_page') }}" class="nav-link">Dashboard</a>
-          <a href="{{ url_for('habit_form_page') }}" class="nav-link">Add Habit</a>
+          <a href="{{ url_for('index') }}" class="nav-link">Dashboard</a>
+          <a href="{{ url_for('habit_form') }}" class="nav-link">Add Habit</a>
         </nav>
       </header>
 

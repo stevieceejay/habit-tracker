@@ -14,6 +14,10 @@ def create_app():
     def index():
         return render_template("index.html")
 
+    @app.get("/habit-form")
+    def habit_form():
+        return render_template("habit_form.html")
+
     @app.get("/static/<path:filename>")
     def static_files(filename):
         return send_from_directory("static", filename)
