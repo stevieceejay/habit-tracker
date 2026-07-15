@@ -1,436 +1,108 @@
-/* =========================================
-   Root Theme Variables
-========================================= */
-:root {
-  --ink: #1a1a1a;
-  --ink-soft: #444;
-  --grid: #e5e5e5;
-  --correct: #4caf50;
-  --incorrect: #d9534f;
-  --gold: #f0ad4e;
-  --bg: #fafafa;
-  --white: #fff;
-}
-
-/* =========================================
-   Base Layout
-========================================= */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: Inter, system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  animation: fadePage 0.4s ease;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #fafafa;
 }
 
-@keyframes fadePage {
-  from { opacity: 0; }
-  to { opacity: 1; }
+nav {
+  margin-bottom: 20px;
 }
 
-/* Page Container */
-.page-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Header */
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-h1 {
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--ink);
-  margin-bottom: 8px;
-}
-
-.sub {
-  color: var(--ink-soft);
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-/* Navigation */
-.nav {
-  margin-top: 12px;
-}
-
-.nav-link {
-  margin: 0 8px;
-  color: var(--ink-soft);
+nav a {
+  margin-right: 15px;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-weight: bold;
+  color: #333;
 }
 
-.nav-link:hover {
-  color: var(--ink);
-}
-
-/* =========================================
-   Add Habit Section
-========================================= */
-.add-section {
-  margin-bottom: 30px;
-}
-
-.add-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.input-modern {
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--grid);
-  font-size: 15px;
-  width: 260px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.input-modern:focus {
-  border-color: var(--ink-soft);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
-  outline: none;
-}
-
-.btn-primary {
-  background: var(--ink);
-  color: var(--white);
-  padding: 12px 18px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.btn-primary:hover {
-  background: var(--ink-soft);
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: var(--white);
-  border: 1px solid var(--grid);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  margin-right: 10px;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: #f2f2f2;
-  transform: translateY(-2px);
-}
-
-.actions {
-  margin-top: 16px;
-}
-
-/* =========================================
-   Habit Form Page
-========================================= */
-.form-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.form-label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 8px;
-  margin-top: 16px;
-}
-
-/* =========================================
-   Habit Table (Modern Card Layout)
-========================================= */
-.habit-wrapper {
-  margin-top: 20px;
+nav a:hover {
+  text-decoration: underline;
 }
 
 table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-}
-
-thead th {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  padding-bottom: 6px;
-}
-
-tr {
-  background: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-}
-
-tr:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-td {
-  padding: 14px;
-  vertical-align: middle;
-}
-
-/* =========================================
-   Habit Name + Streak Bar
-========================================= */
-.habit-cell {
-  text-align: left;
-  width: 220px;
-}
-
-.habit-name {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 6px;
-}
-
-.streak-track {
-  width: 100%;
-  height: 8px;
-  background: var(--grid);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.streak-fill {
-  height: 100%;
-  background: var(--correct);
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
-
-/* =========================================
-   Modern Checkbox Boxes
-========================================= */
-.box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 2px solid var(--grid);
-  border-radius: 8px;
-  background: var(--white);
-  cursor: pointer;
-  transition: 
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
-  position: relative;
-}
-
-.box:hover {
-  transform: scale(1.05);
-}
-
-.box.checked {
-  background: var(--correct);
-  border-color: var(--correct);
-  box-shadow: 0 0 0 3px rgba(76,175,80,0.25);
-}
-
-.box input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.box svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--white);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.box.checked svg {
-  opacity: 1;
-}
-
-/* =========================================
-   Status Column
-========================================= */
-.status-cell {
-  width: 160px;
-  font-size: 14px;
-}
-
-.status-value {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.status-value.up {
-  color: var(--correct);
-}
-
-.status-value.down {
-  color: var(--incorrect);
-}
-
-.status-value.flat {
-  color: var(--ink-soft);
-}
-
-.status-value.new {
-  color: var(--gold);
-}
-
-/* Dual bar comparison */
-.dual-bar {
-  margin-top: 4px;
-}
-
-.dual-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.dual-label {
-  width: 40px;
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.dual-track {
-  flex: 1;
-  height: 6px;
-  background: var(--grid);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.dual-fill {
-  height: 100%;
-  transition: width 0.3s ease;
-}
-
-.dual-fill.prev {
-  background: var(--ink-soft);
-}
-
-.dual-fill.now-up {
-  background: var(--correct);
-}
-
-.dual-fill.now-down {
-  background: var(--incorrect);
-}
-
-/* =========================================
-   Remove Button (Modern)
-========================================= */
-.row-remove {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--incorrect);
-  opacity: 0.7;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.row-remove:hover {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-/* =========================================
-   Row Animations
-========================================= */
-.row-enter {
-  animation: fadeIn 0.25s ease;
-}
-
-.row-leaving {
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   Patterns Section (Modern Card)
-========================================= */
-#patterns {
-  margin-top: 24px;
-  padding: 16px;
-  background: var(--white);
-  border-radius: 12px;
-  border: 1px solid var(--grid);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  font-size: 14px;
-}
-
-.tag {
-  display: inline-block;
-  background: var(--ink-soft);
-  color: var(--white);
-  padding: 4px 8px;
+  border-collapse: collapse;
+  background: white;
   border-radius: 6px;
-  font-size: 12px;
-  margin-bottom: 6px;
+  overflow: hidden;
 }
 
-/* =========================================
-   Empty State
-========================================= */
-.empty-state {
-  padding: 20px;
+td, th {
+  border: 1px solid #ccc;
+  padding: 8px;
   text-align: center;
-  font-size: 15px;
-  opacity: 0.7;
 }
 
-/* =========================================
-   Buttons
-========================================= */
-button {
+th {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+.day-box input {
+  transform: scale(1.3);
   cursor: pointer;
 }
 
-#undo-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
+.trash {
+  color: red;
+  cursor: pointer;
+  font-size: 20px;
 }
 
-.form-title {
-  font-size: 1.6rem;
-  font-weight: 600;
+.trash:hover {
+  opacity: 0.7;
+}
+
+#status-bar {
+  margin-bottom: 25px;
+}
+
+.status-wrapper {
   margin-bottom: 10px;
-  text-align: center;
 }
 
-.form-label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 8px;
-  margin-top: 16px;
+.status-track {
+  width: 100%;
+  height: 12px;
+  background: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
+.status-fill {
+  height: 12px;
+  background: #4caf50;
+  transition: width 0.3s ease;
+}
+
+#analysis-container {
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#analysis-summary p {
+  margin: 6px 0;
+}
+
+#analysis-progress {
+  margin-top: 20px;
+}
+
+#analysis-progress .status-track {
+  margin-top: 10px;
+}
+
+#patterns {
+  margin-top: 25px;
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#patterns h2 {
+  margin-top: 0;
+}

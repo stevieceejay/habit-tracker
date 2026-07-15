@@ -1,280 +1,154 @@
-// ================================
-// Constants
-// ================================
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-
-// ================================
-// API Helpers
-// ================================
 async function apiGet(url) {
   const res = await fetch(url);
   return res.json();
 }
 
-async function apiPost(url, body = null) {
+async function apiPost(url, data) {
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: body ? JSON.stringify(body) : null
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(data)
   });
   return res.json();
 }
 
 async function apiDelete(url) {
-  const res = await fetch(url, { method: "DELETE" });
+  const res = await fetch(url, { method:"DELETE" });
   return res.json();
 }
 
-// ================================
-// State
-// ================================
-let habits = [];
-let undoStack = [];
-const UNDO_LIMIT = 10;
+/* -------------------------------
+   Status Bar (Dashboard)
+------------------------------- */
+function renderStatusBar(habits) {
+  const bar = document.getElementById("status-bar");
+  if (!bar) return;
 
-// ================================
-// Load habits
-// ================================
-async function loadHabits() {
-  habits = await apiGet("/habits");
-  render();
-}
+  const totalChecks = habits.reduce((sum,h)=>sum+h.days.filter(Boolean).length,0);
+  const totalPossible = habits.length * 7;
+  const percent = totalPossible === 0 ? 0 : Math.round((totalChecks/totalPossible)*100);
 
-// ================================
-// Utility
-// ================================
-function escapeHTML(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function currentRate(habit) {
-  const checked = habit.days.filter(Boolean).length;
-  return Math.round((checked / 7) * 100);
-}
-
-function checkSVG() {
-  return `
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
+  bar.innerHTML = `
+    <div class="status-wrapper">
+      <p><strong>${percent}%</strong> weekly completion</p>
+      <div class="status-track">
+        <div class="status-fill" style="width:${percent}%"></div>
+      </div>
+    </div>
   `;
 }
 
-// ================================
-// Rendering
-// ================================
-function render() {
-  const tbody = document.getElementById("tracker-body");
-  const patterns = document.getElementById("patterns");
+/* -------------------------------
+   Analysis Page
+------------------------------- */
+function renderAnalysis(habits) {
+  const container = document.getElementById("analysis-summary");
+  if (!container) return;
 
-  if (habits.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="9">
-          <div class="empty-state">No habits yet — add one above to start the grid.</div>
-        </td>
-      </tr>
+  const totalHabits = habits.length;
+  const totalChecks = habits.reduce((sum,h)=>sum+h.days.filter(Boolean).length,0);
+  const avg = totalHabits === 0 ? 0 : Math.round(totalChecks / totalHabits);
+
+  const best = habits.reduce((a,b)=>a.days.filter(Boolean).length > b.days.filter(Boolean).length ? a : b, habits[0] || null);
+  const worst = habits.reduce((a,b)=>a.days.filter(Boolean).length < b.days.filter(Boolean).length ? a : b, habits[0] || null);
+
+  container.innerHTML = `
+    <h3>Overall Summary</h3>
+    <p>Total habits: ${totalHabits}</p>
+    <p>Total checkmarks: ${totalChecks}</p>
+    <p>Average per habit: ${avg}/7</p>
+    <p>Best habit: ${best ? best.name : "None"}</p>
+    <p>Worst habit: ${worst ? worst.name : "None"}</p>
+  `;
+
+  const progress = document.getElementById("analysis-progress");
+  if (progress) {
+    const percent = totalHabits === 0 ? 0 : Math.round((totalChecks/(totalHabits*7))*100);
+    progress.innerHTML = `
+      <h3>Overall Completion</h3>
+      <div class="status-track">
+        <div class="status-fill" style="width:${percent}%"></div>
+      </div>
+      <p>${percent}%</p>
     `;
-    patterns.innerHTML = "";
-    updateUndoButton();
-    return;
   }
-
-  tbody.innerHTML = habits.map(h => rowHTML(h)).join("");
-
-  habits.forEach(h => {
-    DAYS.forEach((_, i) => {
-      const input = document.querySelector(`#box-${h.id}-${i} input`);
-      input.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleDay(h.id, i);
-      });
-    });
-
-    document.getElementById(`remove-${h.id}`)
-      .addEventListener("click", () => removeHabit(h.id));
-  });
-
-  renderPatterns();
-  updateUndoButton();
 }
 
-function rowHTML(h) {
-  const rate = currentRate(h);
-  const streakColor =
-    rate >= 60 ? "var(--correct)" :
-    rate >= 30 ? "var(--gold)" :
-    "var(--incorrect)";
-
-  let statusHTML;
-
-  if (h.prevRate === null) {
-    statusHTML = `
-      <div class="status-value new">— New</div>
-      <div class="dual-bar">
-        <div class="dual-row">
-          <span class="dual-label">now</span>
-          <div class="dual-track">
-            <div class="dual-fill now-up" style="width:${rate}%; background:var(--ink-soft);"></div>
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    const diff = rate - h.prevRate;
-    const dir = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
-    const arrow = dir === "up" ? "▲" : dir === "down" ? "▼" : "—";
-    const sign = diff > 0 ? "+" : "";
-
-    statusHTML = `
-      <div class="status-value ${dir}">${arrow} ${sign}${diff}pt</div>
-      <div class="dual-bar">
-        <div class="dual-row">
-          <span class="dual-label">prev</span>
-          <div class="dual-track">
-            <div class="dual-fill prev" style="width:${h.prevRate}%;"></div>
-          </div>
-        </div>
-        <div class="dual-row">
-          <span class="dual-label">now</span>
-          <div class="dual-track">
-            <div class="dual-fill ${dir === "down" ? "now-down" : "now-up"}" style="width:${rate}%;"></div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  const boxes = h.days.map((checked, i) => `
+/* -------------------------------
+   Habit Table Renderer
+------------------------------- */
+function rowHTML(habit) {
+  const dayCells = habit.days.map((checked,i)=>`
     <td>
-      <label class="box ${checked ? "checked" : ""}" id="box-${h.id}-${i}">
-        <input type="checkbox" ${checked ? "checked" : ""} tabindex="-1">
-        ${checkSVG()}
-      </label>
+      <div class="day-box" id="box-${habit.id}-${i}">
+        <input type="checkbox" ${checked?"checked":""} />
+      </div>
     </td>
   `).join("");
 
   return `
-    <tr class="row-enter">
-      <td class="habit-cell">
-        <div class="habit-name">${escapeHTML(h.name)}</div>
-        <div class="streak-track">
-          <div class="streak-fill" style="width:${rate}%; background:${streakColor};"></div>
-        </div>
-      </td>
-
-      ${boxes}
-
-      <td class="status-cell">${statusHTML}</td>
-
-      <td>
-        <button type="button" class="icon row-remove" id="remove-${h.id}" aria-label="Remove ${escapeHTML(h.name)}">✕</button>
-      </td>
+    <tr id="row-${habit.id}">
+      <td>${habit.name}</td>
+      ${dayCells}
+      <td>${habit.days.filter(Boolean).length}/7</td>
+      <td><span class="trash" data-id="${habit.id}">🗑️</span></td>
     </tr>
   `;
 }
 
-// ================================
-// Backend Actions
-// ================================
-async function toggleDay(habitId, dayIndex) {
-  await apiPost(`/habits/toggle/${habitId}/${dayIndex}`);
-  await loadHabits();
+function render(habits) {
+  const tbody = document.getElementById("tracker-body");
+  if (tbody) tbody.innerHTML = habits.map(rowHTML).join("");
+
+  renderStatusBar(habits);
+
+  setTimeout(()=>{
+    habits.forEach(habit=>{
+      habit.days.forEach((checked,i)=>{
+        const box = document.querySelector(`#box-${habit.id}-${i} input`);
+        if (!box) return;
+        box.addEventListener("change", async ()=>{
+          await apiPost(`/habits/toggle/${habit.id}/${i}`, {});
+          loadHabits();
+        });
+      });
+    });
+
+    document.querySelectorAll(".trash").forEach(icon=>{
+      icon.addEventListener("click", async ()=>{
+        await apiDelete(`/habits/${icon.dataset.id}`);
+        loadHabits();
+      });
+    });
+  },0);
 }
 
-async function removeHabit(habitId) {
-  const rowEl = document.getElementById(`remove-${habitId}`).closest("tr");
-  rowEl.classList.add("row-leaving");
-
-  rowEl.addEventListener("transitionend", async () => {
-    const removed = habits.find(h => h.id === habitId);
-
-    undoStack.push(removed);
-    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
-
-    await apiDelete(`/habits/${habitId}`);
-    await loadHabits();
-  }, { once: true });
-}
-
-async function undoRemove() {
-  if (undoStack.length === 0) return;
-
-  const habit = undoStack.pop();
-
-  await apiPost("/habits", { name: habit.name });
-  await loadHabits();
+async function loadHabits() {
+  const habits = await apiGet("/habits");
+  render(habits);
+  renderAnalysis(habits);
 }
 
 async function addHabit(name) {
-  await apiPost("/habits", { name });
-  await loadHabits();
+  await apiPost("/habits",{name});
+  loadHabits();
 }
 
-async function resetWeek() {
-  await apiPost("/reset-week");
-  await loadHabits();
-}
+document.addEventListener("DOMContentLoaded",()=>{
+  loadHabits();
 
-// ================================
-// Patterns
-// ================================
-async function renderPatterns() {
-  const data = await apiGet("/patterns");
-
-  if (!data || !data.strongest) {
-    document.getElementById("patterns").innerHTML = "";
-    return;
+  const form = document.getElementById("add-form");
+  if (form) {
+    form.addEventListener("submit",async e=>{
+      e.preventDefault();
+      const input = document.getElementById("habit-input");
+      if (!input) return;
+      const name = input.value.trim();
+      if (!name) return;
+      await addHabit(name);
+      input.value="";
+    });
   }
-
-  let driftLine = "";
-  if (data.drifting) {
-    driftLine = `
-      <br><span class="tag">DRIFTING</span><br>
-      <strong>${escapeHTML(data.drifting.name)}</strong> is down ${Math.abs(data.drifting.diff)}pt versus last week.
-    `;
-  }
-
-  document.getElementById("patterns").innerHTML = `
-    <span class="tag">PATTERN SCAN</span><br>
-    <strong>${escapeHTML(data.strongest.name)}</strong> is your strongest pattern this week at ${data.strongest.rate}%.
-    <strong>${escapeHTML(data.weakest.name)}</strong> is the weakest at ${data.weakest.rate}%.
-    ${driftLine}
-    <br><span style="font-size:11px; opacity:.8;">
-      This comparison now runs through Flask + SQLite.
-    </span>
-  `;
-}
-
-// ================================
-// Buttons
-// ================================
-function updateUndoButton() {
-  const btn = document.getElementById("undo-btn");
-  btn.disabled = undoStack.length === 0;
-  btn.textContent = undoStack.length > 0
-    ? `Undo remove (${undoStack.length})`
-    : "Undo remove";
-}
-
-document.getElementById("add-form").addEventListener("submit", async e => {
-  e.preventDefault();
-  const input = document.getElementById("habit-input");
-  const name = input.value.trim();
-  if (!name) return;
-
-  await addHabit(name);
-  input.value = "";
-  input.focus();
 });
-
-document.getElementById("undo-btn").addEventListener("click", undoRemove);
-document.getElementById("new-week-btn").addEventListener("click", resetWeek);
-
-// ================================
-// Initial Load
-// ================================
-loadHabits();

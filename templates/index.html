@@ -2,28 +2,22 @@
 
 {% block content %}
 
-<section class="habit-wrapper">
+<h2>Weekly Status</h2>
+<div id="status-bar"></div>
 
+<section class="habit-wrapper">
   <table id="tracker">
     <thead>
       <tr>
-        <th class="col-habit">Habit</th>
-        <th>Sun</th>
-        <th>Mon</th>
-        <th>Tue</th>
-        <th>Wed</th>
-        <th>Thu</th>
-        <th>Fri</th>
-        <th>Sat</th>
-        <th class="col-status">Status</th>
-        <th class="col-actions"></th>
+        <th>Habit</th>
+        <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+        <th>Thu</th><th>Fri</th><th>Sat</th>
+        <th>Status</th>
+        <th></th>
       </tr>
     </thead>
-
-    <!-- JS will fully populate this -->
     <tbody id="tracker-body"></tbody>
   </table>
-
 </section>
 
 <section id="patterns"></section>

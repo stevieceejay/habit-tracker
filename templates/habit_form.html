@@ -1,34 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Add Habit – Habit Ledger{% endblock %}
-
 {% block content %}
 
-<section class="add-section">
+<h2>Add Habit</h2>
 
-  <h2 class="form-title">Add a New Habit</h2>
-  <p class="sub">Create a habit to track in your weekly ledger.</p>
-
-  <form id="habit-form" class="habit-form" method="POST" action="{{ url_for('habit_form') }}">
-
-    <label for="habit-name" class="form-label">Habit Name</label>
-    <input
-      type="text"
-      id="habit-name"
-      name="habit-name"
-      class="input-modern"
-      placeholder="e.g., Read 20 minutes"
-      required
-      maxlength="40"
-    />
-
-    <div class="actions">
-      <button type="submit" class="btn-primary">Save Habit</button>
-      <a href="{{ url_for('index') }}" class="btn-secondary">Cancel</a>
-    </div>
-
-  </form>
-
-</section>
+<form id="add-form">
+  <input id="habit-input" type="text" placeholder="Habit name" required>
+  <button type="submit">Add</button>
+</form>
 
 {% endblock %}
