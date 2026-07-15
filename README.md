@@ -1,14 +1,53 @@
-# habit-tracker
+# Habit Tracker — Daily Consistency Dashboard
 
-a simple habit tracking app made in partnership with AI.
+A lightweight, fast, and clean habit‑tracking web application built with **Flask**, **SQLite**, and **vanilla JavaScript**. Designed for daily consistency, weekly reflection, and clear visual progress. This project demonstrates practical full‑stack development, clean architecture, and thoughtful UI/UX decisions.
 
-## Structure
+---
 
-- Root-level entrypoint: [index.html](index.html)
-- Shared frontend behavior: [static/js/app.js](static/js/app.js)
-- Styles: [static/css/styles.css](static/css/styles.css)
-- Backend app logic: [app.py](app.py)
+## ✨ Features
 
-## Notes
+### 🔹 Habit Management
+- Add new habits  
+- Delete habits with a single trash‑icon action  
+- Toggle daily completion with intuitive checkboxes  
 
-The app now uses a single canonical HTML entrypoint at the repository root so tests and local previews can find the UI reliably. The frontend script is also tolerant of legacy paths such as the old frontend directory and form page locations.
+### 🔹 Weekly Dashboard
+- Visual **status bar** showing weekly completion percentage  
+- Automatic progress calculations  
+- Clean table layout for daily tracking  
+
+### 🔹 Analysis Page
+- Overall habit summary  
+- Total checkmarks  
+- Average completion rate  
+- Best and worst performing habits  
+- Combined progress bar for weekly performance  
+
+### 🔹 UI/UX
+- Simple, clean, responsive layout  
+- Minimalist design for focus and clarity  
+- Fast, no‑framework frontend (pure JS + CSS)
+
+---
+
+## 🧩 Tech Stack
+
+**Backend**
+- Python 3  
+- Flask  
+- SQLite  
+
+**Frontend**
+- HTML  
+- CSS  
+- JavaScript  
+
+**Architecture**
+- Blueprint‑based routing  
+- RESTful API endpoints  
+- Modular folder structure  
+
+---
+
+## 📂 Project Structure
+
